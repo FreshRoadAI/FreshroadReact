@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, FC } from 'react';
 import { 
   BookOpen, 
   GraduationCap, 
@@ -18,11 +18,11 @@ import {
   Music
 } from 'lucide-react';
 
-const App = () => {
-  const [selectedRole, setSelectedRole] = useState('All');
+const App: FC = () => {
+  const [selectedRole, setSelectedRole] = useState<string>('All');
   
-  const roles = ['All', 'Student', 'Teacher', 'Parent', 'Institution'];
-  const services = [
+  const roles: string[] = ['All', 'Student', 'Teacher', 'Parent', 'Institution'];
+  const services: { icon: JSX.Element; title: string }[] = [
     { 
       icon: <BookOpen className="w-8 h-8 text-blue-600" />, 
       title: 'Courses'
@@ -67,7 +67,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
       <nav className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -103,7 +102,6 @@ const App = () => {
         </div>
       </nav>
 
-      {/* Announcement Bar */}
       <div className="bg-blue-600 text-white px-4 py-3">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <p>New: AI-Powered Personalized Learning !</p>
@@ -113,7 +111,6 @@ const App = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-4xl font-bold text-center mb-4">
           Your Gateway to AI Education
@@ -128,7 +125,7 @@ const App = () => {
           </h3>
           
           <div className="flex justify-center space-x-4">
-            {roles.map((role) => (
+            {roles.map((role: string) => (
               <button
                 key={role}
                 onClick={() => setSelectedRole(role)}
@@ -145,7 +142,7 @@ const App = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {services.map((service, index) => (
+          {services.map((service: { icon: JSX.Element; title: string }, index: number) => (
             <div
               key={index}
               className="flex flex-col items-center p-6 hover:bg-gray-50 rounded-xl cursor-pointer border border-gray-100 transition-all hover:shadow-md"
