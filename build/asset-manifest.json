@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.85d2d025.css",
+    "main.js": "/static/js/main.c976ae0b.js",
+    "static/media/callrep.png": "/static/media/callrep.9fcae1a0e63f887a5303.png",
+    "static/media/freshroadlogo.png": "/static/media/freshroadlogo.b0feb88402c1ed2f7e79.png",
+    "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/index.html",
+    "main.85d2d025.css.map": "/static/css/main.85d2d025.css.map",
+    "main.c976ae0b.js.map": "/static/js/main.c976ae0b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.85d2d025.css",
+    "static/js/main.c976ae0b.js"
+  ]
+}
