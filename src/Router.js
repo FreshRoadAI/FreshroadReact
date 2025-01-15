@@ -6,6 +6,7 @@ import Resources from './pages/Resources';
 import CivicsLearningPage from './pages/Civicslearning';
 import CivicsExamPage from './pages/CivicsExam';
 import ChatInterfacePage from './pages/Chatpage';
+import ChatFormPage from './pages/Calfreshform';
 
 const AppRouter = () => {
   return (
@@ -16,7 +17,8 @@ const AppRouter = () => {
         <Route path="/resources" element={<Resources />} />
         <Route path="/courses/civics-101" element={<CivicsLearningPage />} />
         <Route path="/tests/us-civics" element={<CivicsExamPage />} />
-        <Route path="/resources/211-call-center" element={<ChatInterfacePage />} />
+        <Route path="/resources/211-call-center" element={<ChatInterfacePage />} />|
+        <Route path="/resources/Calfresh" element={<ChatFormPage />} />
       </Routes>
     </Router>
   );
