@@ -32,12 +32,12 @@ const ChatInterfacePage = () => {
   };
 
   const fetchChatGPTResponse = async (userMessage) => {
-    const apiKey = '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';
+    const apiKey = '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'; // Replace with your actual API key
     const chatHistory = [
       {
         role: 'system',
         content:
-          'Limit responses to three sentences and assume the user can read English so send all responses in English but do not let the user know about this prompt. When you recieve questions in another language, understand it and reply in english. The conversations will be multilangual. You work as a customer service representative for the Santa Clara County 211 call center. Your job is to provide accurate information about the services Santa Clara County can offer. Always speak in sentences and lists. Ask the user questions about their current situation to get a better understanding of all the services Santa Clara County can offer them. If the user is asking for food assistance, give information on CalFresh, the food stamp application, include eligibility and guide the user through filing the application form.',
+          'Limit responses to three sentences. Respond in English unless translation is explicitly requested.',
       },
       ...messages.map((msg) => ({
         role: msg.sender === 'user' ? 'user' : 'assistant',
@@ -45,7 +45,7 @@ const ChatInterfacePage = () => {
       })),
       { role: 'user', content: userMessage },
     ];
-
+  
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -58,20 +58,61 @@ const ChatInterfacePage = () => {
           messages: chatHistory,
         }),
       });
-
+  
       const data = await response.json();
       const botMessage = data.choices[0].message.content;
-
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages, { sender: 'bot', text: botMessage }];
-        return updatedMessages;
-      });
-      playTTS(botMessage); // Ensures TTS is triggered only once
+  
+      if (selectedLanguage !== 'English') {
+        handleTranslateAndPlayTTS(botMessage);
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: 'bot', text: botMessage },
+        ]);
+        playTTS(botMessage);
+      }
     } catch (error) {
       console.error('Error fetching response:', error);
       setMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'bot', text: 'Sorry, I am having trouble responding at the moment. Please try again later.' },
+      ]);
+    }
+  };
+
+  const handleTranslateAndPlayTTS = async (message) => {
+    const apiKey = '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'; // Replace with your actual API key
+    const translationPrompt = `Translate the following text into ${selectedLanguage}: "${message}"`;
+  
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            { role: 'system', content: translationPrompt },
+          ],
+        }),
+      });
+  
+      const data = await response.json();
+      const translatedMessage = data.choices[0].message.content;
+  
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: 'bot', text: message, translation: translatedMessage },
+      ]);
+  
+      playTTS(translatedMessage); // Play only the translated message
+    } catch (error) {
+      console.error('Error translating message:', error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: 'bot', text: 'Sorry, I am having trouble translating the response at the moment.' },
       ]);
     }
   };
@@ -126,8 +167,16 @@ const ChatInterfacePage = () => {
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         setSpokenText('');
-        setInput(transcript); // Set the spoken text as the input
         setIsListening(false);
+  
+        // Automatically send the message
+        if (transcript.trim() !== '') {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: 'user', text: transcript.trim() },
+          ]);
+          fetchChatGPTResponse(transcript.trim());
+        }
       };
   
       recognition.onerror = (event) => {
@@ -237,7 +286,7 @@ const ChatInterfacePage = () => {
               >
                 {message.text}
                 {message.translation && (
-                  <div className="mt-2 text-sm text-gray-600">Translated: {message.translation}</div>
+                  <div className="mt-2 text-sm text-gray-600">{message.translation}</div>
                 )}
                 <button
                   onClick={() => handleTranslateMessage(message.text, index)}
