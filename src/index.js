@@ -5,10 +5,6 @@ import './index.css';
 import AppRouter from './Router'; // Assuming Router.js handles the routing
 
 const root = ReactDOM.createRoot(document.getElementById('root')); // Use createRoot
-root.render(
-
-  <React.StrictMode>
+root.render(  
     <AppRouter />
-  </React.StrictMode>
-
 );
