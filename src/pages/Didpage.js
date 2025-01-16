@@ -8,7 +8,7 @@ import { setupAgent, speak } from '../d-id';
 
 const welcomeMsg = 'Welcome to the Santa Clara County 211 call center. How can I help you today?'
 
-const ChatInterfacePage = () => {
+const DIDInterfacePage = () => {
   const [messages, setMessages] = useState([{ sender: 'bot', text: "Connecting to agent..." }]);
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -301,4 +301,4 @@ const ChatInterfacePage = () => {
   );
 };
 
-export default ChatInterfacePage;
+export default DIDInterfacePage;

@@ -14,9 +14,9 @@ const ResourcesPage = () => {
     },
     {
       icon: <Mic className="w-8 h-8 text-cyan-400" />,
-      title: 'Interview Representative',
-      description: 'Prepare for interviews with guidance and mock sessions.',
-      link: '/resources/interview-rep',
+      title: 'DID Interface',
+      description: 'Lip Sync and Animated Avatar.',
+      link: '/resources/DID',
     },
   ];
 

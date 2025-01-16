@@ -7,6 +7,7 @@ import CivicsLearningPage from './pages/Civicslearning';
 import CivicsExamPage from './pages/CivicsExam';
 import ChatInterfacePage from './pages/Chatpage';
 import ChatFormPage from './pages/Calfreshform';
+import DIDInterfacePage from './pages/Didpage';
 
 const AppRouter = () => {
   return (
@@ -19,6 +20,7 @@ const AppRouter = () => {
         <Route path="/tests/us-civics" element={<CivicsExamPage />} />
         <Route path="/resources/211-call-center" element={<ChatInterfacePage />} />
         <Route path="/resources/Calfresh" element={<ChatFormPage />} />
+        <Route path="/resources/DID" element={<DIDInterfacePage />} />
       </Routes>
     </Router>
   );
