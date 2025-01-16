@@ -1,11 +1,11 @@
-import '../App.css'; // Update this to point to the root directory
-import logo from '../logo.svg'; // Same for logo
+import '../App.css'; // Ensure correct relative path
+import logo from '../logo.svg'; // Ensure correct relative path or remove if unused
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
-import { 
-  BookOpen, 
-  GraduationCap, 
-  Users, 
+import React, { useState, useEffect } from 'react';
+import {
+  BookOpen,
+  GraduationCap,
+  Users,
   Calendar,
   Library,
   FileText,
@@ -16,94 +16,171 @@ import {
   Lightbulb,
   Code,
   PenTool,
-  Music
+  Music,
 } from 'lucide-react';
 import freshroadlogo from '../images/freshroadlogo.png';
 
 const App = () => {
   const [selectedRole, setSelectedRole] = useState('All');
-  
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detect if the device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const roles = ['All', 'Immigrant', 'Student', 'Institution'];
   const services = [
-    { 
-      icon: <BookOpen className="w-8 h-8 text-cyan-400" />, 
-      title: 'Courses'
+    {
+      icon: <BookOpen className="w-8 h-8 text-cyan-400" />,
+      title: 'Courses',
     },
-    { 
-      icon: <GraduationCap className="w-8 h-8 text-cyan-400" />, 
-      title: 'Academic Programs'
+    {
+      icon: <GraduationCap className="w-8 h-8 text-cyan-400" />,
+      title: 'Academic Programs',
     },
-    { 
-      icon: <Video className="w-8 h-8 text-cyan-400" />, 
-      title: 'Live Classes'
+    {
+      icon: <Video className="w-8 h-8 text-cyan-400" />,
+      title: 'Live Classes',
     },
-    { 
-      icon: <Brain className="w-8 h-8 text-cyan-400" />, 
-      title: 'AI Tutoring'
+    {
+      icon: <Brain className="w-8 h-8 text-cyan-400" />,
+      title: 'AI Tutoring',
     },
-    { 
-      icon: <Calendar className="w-8 h-8 text-cyan-400" />, 
-      title: 'Schedule'
+    {
+      icon: <Calendar className="w-8 h-8 text-cyan-400" />,
+      title: 'Schedule',
     },
-    { 
-      icon: <Library className="w-8 h-8 text-cyan-400" />, 
-      title: 'Resources'
+    {
+      icon: <Library className="w-8 h-8 text-cyan-400" />,
+      title: 'Resources',
     },
-    { 
-      icon: <FileText className="w-8 h-8 text-cyan-400" />, 
-      title: 'Assignments'
+    {
+      icon: <FileText className="w-8 h-8 text-cyan-400" />,
+      title: 'Assignments',
     },
-    { 
-      icon: <BarChart className="w-8 h-8 text-cyan-400" />, 
-      title: 'Progress'
+    {
+      icon: <BarChart className="w-8 h-8 text-cyan-400" />,
+      title: 'Progress',
     },
-    { 
-      icon: <MessageCircle className="w-8 h-8 text-cyan-400" />, 
-      title: 'Discussion'
+    {
+      icon: <MessageCircle className="w-8 h-8 text-cyan-400" />,
+      title: 'Discussion',
     },
     {
       icon: <Code className="w-8 h-8 text-cyan-400" />,
-      title: 'Coding'
-    }
+      title: 'Coding',
+    },
   ];
 
-  return (
+  // ============================
+  // Mobile UI
+  // ============================
+  const MobileUI = () => (
+    <div className="min-h-screen bg-white">
+      {/* Header (Match style from bottom page) */}
+      <nav className="bg-white border-b">
+        <div className="px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+          <div className="flex items-center">
+            <img src={freshroadlogo} alt="Logo" className="w-35 h-8 mr-2" />
+          </div>
+          <div>
+            <button className="text-white px-4 py-2 rounded-md hover:bg-blue-700 bg-cyan-400">
+              Sign In
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="px-4 py-6">
+        <h1 className="text-2xl font-bold text-center mb-4">Fresh Road</h1>
+        <p className="text-center text-gray-600 mb-6">
+          Your AI companion for navigating government and social services.
+        </p>
+        <nav className="grid grid-cols-2 gap-4">
+          <Link
+            to="/courses"
+            className="bg-cyan-100 text-cyan-600 p-4 rounded-lg text-center"
+          >
+            Courses
+          </Link>
+          <Link
+            to="/resources"
+            className="bg-cyan-100 text-cyan-600 p-4 rounded-lg text-center"
+          >
+            Resources
+          </Link>
+          <Link
+            to="/community"
+            className="bg-cyan-100 text-cyan-600 p-4 rounded-lg text-center"
+          >
+            Community
+          </Link>
+          <Link
+            to="/company"
+            className="bg-cyan-100 text-cyan-600 p-4 rounded-lg text-center"
+          >
+            Company
+          </Link>
+        </nav>
+      </main>
+    </div>
+  );
+
+  // ============================
+  // Desktop UI
+  // ============================
+  const DesktopUI = () => (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="bg-white border-b">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="flex justify-between h-16">
-    <div className="flex items-center">
-  <img 
-    src={freshroadlogo} 
-    alt="ChatUni Logo" 
-    className="w-35 h-8 mr-2" 
-  />
-</div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <img src={freshroadlogo} alt="ChatUni Logo" className="w-35 h-8 mr-2" />
+            </div>
 
-      <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-        <Link to="/courses" className="text-gray-900 inline-flex items-center px-1 pt-1">
-          Learn
-        </Link>
-        <Link to="/resources" className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1">
-          Resources
-        </Link>
-        <Link to="/community" className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1">
-          News
-        </Link>
-        <Link to="/company" className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1">
-          Company
-        </Link>
-      </div>
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <Link
+                to="/courses"
+                className="text-gray-900 inline-flex items-center px-1 pt-1"
+              >
+                Learn
+              </Link>
+              <Link
+                to="/resources"
+                className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1"
+              >
+                Resources
+              </Link>
+              <Link
+                to="/community"
+                className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1"
+              >
+                News
+              </Link>
+              <Link
+                to="/company"
+                className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1"
+              >
+                Company
+              </Link>
+            </div>
 
-      <div className="flex items-center">
-        <button className=" text-white px-4 py-2 rounded-md hover:bg-blue-700 bg-cyan-400">
-          Sign In
-        </button>
-      </div>
-    </div>
-  </div>
-</nav>;
+            <div className="flex items-center">
+              <button className="text-white px-4 py-2 rounded-md hover:bg-blue-700 bg-cyan-400">
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* Announcement Bar */}
       <div className="bg-cyan-500 text-white px-4 py-3">
@@ -117,18 +194,17 @@ const App = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-4xl font-bold text-center mb-4">
-          Fresh Road
-        </h2>
+        <h2 className="text-4xl font-bold text-center mb-4">Fresh Road</h2>
         <p className="text-xl text-gray-600 text-center mb-12">
-        We are the personalized AI language learning companion designed specifically to help non-native speakers navigate essential government and social services.
+          We are the personalized AI language learning companion designed specifically
+          to help non-native speakers navigate essential government and social services.
         </p>
 
         <div className="mb-12">
           <h3 className="text-2xl font-semibold text-center mb-6">
             Choose A Role to Get Started
           </h3>
-          
+
           <div className="flex justify-center space-x-4">
             {roles.map((role) => (
               <button
@@ -160,6 +236,9 @@ const App = () => {
       </main>
     </div>
   );
+
+  // Return whichever layout
+  return isMobile ? <MobileUI /> : <DesktopUI />;
 };
 
 export default App;
