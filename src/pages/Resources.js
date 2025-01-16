@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css'; // Ensure correct path
 import freshroadlogo from '../images/freshroadlogo.png';
-import { Headphones, Mic, Apple } from 'lucide-react';
+import { Headphones, Mic, Apple, ShoppingBasket  } from 'lucide-react';
 
 const ResourcesPage = () => {
   const representatives = [
@@ -12,6 +12,13 @@ const ResourcesPage = () => {
       description: 'Get assistance with community resources and support.',
       link: '/resources/211-call-center',
     },
+    {
+      icon: <ShoppingBasket  className="w-8 h-8 text-cyan-400" />,
+      title: 'Food Bank Locator',
+      description: 'Get information on your local food banks',
+      link: '/resources/foodbank',
+    },
+
     {
       icon: <Mic className="w-8 h-8 text-cyan-400" />,
       title: 'DID Interface',

@@ -8,6 +8,7 @@ import CivicsExamPage from './pages/CivicsExam';
 import ChatInterfacePage from './pages/Chatpage';
 import ChatFormPage from './pages/Calfreshform';
 import DIDInterfacePage from './pages/Didpage';
+import FoodBankPage from './pages/Foodbank';
 
 const AppRouter = () => {
   return (
@@ -21,6 +22,7 @@ const AppRouter = () => {
         <Route path="/resources/211-call-center" element={<ChatInterfacePage />} />
         <Route path="/resources/Calfresh" element={<ChatFormPage />} />
         <Route path="/resources/DID" element={<DIDInterfacePage />} />
+        <Route path="/resources/foodbank" element={<FoodBankPage />} />
       </Routes>
     </Router>
   );

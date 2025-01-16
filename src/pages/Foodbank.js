@@ -40,7 +40,7 @@ const translations = {
   },
 };
 
-const ChatInterfacePage = () => {
+const FoodBankPage = () => {
   // -------------------------
   // States
   // -------------------------
@@ -228,65 +228,6 @@ const ChatInterfacePage = () => {
   };
 
   // ==========================================================================
-// GPT Response - "FoodBank"
-// ==========================================================================
-const fetchFoodBankGPTResponse = async (userMessage) => {
-  const chatHistory = [
-    {
-      role: 'system',
-      content:
-        'You are an assistant that helps users find information about local food banks in Santa Clara County. Kepp your responses to under 3 sentences. Start by asking wha the address of the user and providing the closest food bank to the user. Provide hours of operation, address, eligibility requirements, phone number. Ask clarifying questions if needed, and summarize the information clearly so the user can quickly locate assistance.',
-    },
-    ...messages
-      .filter((msg) => typeof msg.text === 'string')
-      .map((msg) => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.text,
-      })),
-    { role: 'user', content: userMessage },
-  ];
-
-  try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: chatHistory,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('GPT API Error Response:', errorText);
-      throw new Error(`GPT API Error: ${response.status} - ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    const botMessage = data.choices[0].message.content.trim();
-
-    if (selectedLanguage !== 'English') {
-      handleTranslateAndPlayTTS(botMessage);
-    } else {
-      setMessages((prev) => [...prev, { sender: 'bot', text: botMessage }]);
-      playTTS(botMessage);
-    }
-  } catch (error) {
-    console.error('Error fetching response:', error.message);
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: 'bot',
-        text: 'Sorry, I am having trouble responding about food banks right now.',
-      },
-    ]);
-  }
-};
-
-  // ==========================================================================
   // Translate & TTS
   // ==========================================================================
   const handleTranslateAndPlayTTS = async (message) => {
@@ -364,11 +305,9 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
       const userMessage = input.trim();
       setMessages((prev) => [...prev, { sender: 'user', text: userMessage }]);
       setInput('');
-  
+
       if (conversationMode === 'calfresh') {
         fetchCalfreshGPTResponse(userMessage);
-      } else if (conversationMode === 'foodbank') {
-        fetchFoodBankGPTResponse(userMessage);
       } else {
         fetchGeneralGPTResponse(userMessage);
       }
@@ -544,28 +483,23 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
 
       // FoodBank
       if (message.type === 'foodBankAccepted') {
-        const foodbankHeader = translations[selectedLanguage]?.foodbankHeader 
-                              || translations.English.foodbankHeader;
-        const foodbankMessage = translations[selectedLanguage]?.foodbankMessage
-                              || translations.English.foodbankMessage;
-        const foodbankButton = translations[selectedLanguage]?.foodbankButton
-                              || translations.English.foodbankButton;
-      
+        const foodbankHeader =
+          translations[selectedLanguage]?.foodbankHeader ||
+          translations.English.foodbankHeader;
+        const foodbankMessage =
+          translations[selectedLanguage]?.foodbankMessage ||
+          translations.English.foodbankMessage;
+        const foodbankButton =
+          translations[selectedLanguage]?.foodbankButton ||
+          translations.English.foodbankButton;
+
         return (
           <div key={index} className="flex mb-4 items-center justify-start w-full">
             <div className="max-w-sm w-auto p-4 rounded-lg shadow bg-blue-100 text-blue-800">
               <p className="mb-2 font-semibold">{foodbankHeader}</p>
               <p className="mb-4">{foodbankMessage}</p>
               <button
-                onClick={() => {
-                  // 1) Switch conversation mode
-                  setConversationMode('foodbank');
-                  // 2) Send an intro user message
-                  const introMsg = 'I would like more information about local food banks.';
-                  setMessages((prev) => [...prev, { sender: 'user', text: introMsg }]);
-                  // 3) Call fetchFoodBankGPTResponse
-                  fetchFoodBankGPTResponse(introMsg);
-                }}
+                onClick={() => navigate('/resources/foodbank')}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
                 {foodbankButton}
@@ -741,4 +675,4 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
   );
 };
 
-export default ChatInterfacePage;
+export default FoodBankPage;

@@ -1,65 +1,95 @@
-    import React, { useState, useEffect, useRef } from 'react';
-    import { useNavigate } from 'react-router-dom';
-    import '../App.css';
-    import freshroadlogo from '../images/freshroadlogo.png';
-    import avatarImage from '../images/callrep.png';
-    import {
-      PaperAirplaneIcon,
-      MicrophoneIcon,
-      TranslateIcon,
-    } from '@heroicons/react/outline';
-    import { tts11 } from '../api/elevenlabs';
-    
-    const ChatFormPage = () => {
-      // -------------------------
-      // State
-      // -------------------------
-      const [messages, setMessages] = useState([
-        {
-          sender: 'bot',
-          text: 'I am here to help you fill out the Calfresh application. Please provide me with the necessary information to get started. Please provide me with your contact email address.',
-        },
-      ]);
-      const [input, setInput] = useState('');
-      const [isListening, setIsListening] = useState(false);
-      const [spokenText, setSpokenText] = useState('');
-      const [selectedLanguage, setSelectedLanguage] = useState('English');
-      const [isTranslating, setIsTranslating] = useState(false);
-    
-      // -------------------------
-      // Refs & Navigation
-      // -------------------------
-      const messageEndRef = useRef(null);
-      const navigate = useNavigate();
-    
-      // -------------------------
-      // Detect Mobile (only once, so it doesn't flip mid-session)
-      // -------------------------
-      const [mobileLayout] = useState(() =>
-        /Mobi|Android/i.test(navigator.userAgent)
-      );
-    
-      // -------------------------
-      // Language Codes
-      // -------------------------
-      const languageCodes = {
-        English: 'en-US',
-        Español: 'es-ES',
-        中文: 'zh-CN',
-        Français: 'fr-FR',
-        Deutsch: 'de-DE',
-        Italiano: 'it-IT',
-        日本語: 'ja-JP',
-        한국어: 'ko-KR',
-        Português: 'pt-BR',
-        Русский: 'ru-RU',
-      };
-    
-      // -------------------------
-      // OpenAI Key (example)
-      // -------------------------
-      const OPENAI_API_KEY = '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'; // Replace with a secure mechanism
-    
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../App.css';
+import freshroadlogo from '../images/freshroadlogo.png';
+import avatarImage from '../images/callrep.png';
+import {
+  PaperAirplaneIcon,
+  MicrophoneIcon,
+  TranslateIcon,
+} from '@heroicons/react/outline';
+import { tts11 } from '../api/elevenlabs';
+
+const ChatFormPage = () => {
+  // -------------------------
+  // Mobile vs Desktop by Screen Width
+  // -------------------------
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // -------------------------
+  // State
+  // -------------------------
+  const [messages, setMessages] = useState([
+    {
+      sender: 'bot',
+      text: 'Hello! I am here to help you fill out the CalFresh application. Ask me any questions you have. First, what is your contact email address?',
+    },
+  ]);
+  const [input, setInput] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [spokenText, setSpokenText] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [isTranslating, setIsTranslating] = useState(false);
+
+
+  
+
+  // Refs & Navigation
+  const messageEndRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Input refs for Desktop and Mobile
+  const desktopInputRef = useRef(null);
+  const mobileInputRef = useRef(null);
+  const audioRef = useRef(null); // For managing audio playback
+  // Language Codes
+  const languageCodes = {
+    English: 'en-US',
+    Español: 'es-ES',
+    中文: 'zh-CN',
+    Français: 'fr-FR',
+    Deutsch: 'de-DE',
+    Italiano: 'it-IT',
+    日本語: 'ja-JP',
+    한국어: 'ko-KR',
+    Português: 'pt-BR',
+    Русский: 'ru-RU',
+  };
+
+  // OpenAI Key (example)
+  const OPENAI_API_KEY = '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'; // Replace with a secure mechanism
+
+  // Focus the correct input whenever messages or layout changes
+  useEffect(() => {
+    if (isMobile) {
+      mobileInputRef.current?.focus();
+    } else {
+      desktopInputRef.current?.focus();
+    }
+  }, [messages, isMobile]);
+
+
+  useEffect(() => {
+    if (messages.length > 0 && messages[0].sender === 'bot') {
+      playTTS(messages[0].text);
+    }
+  }, [messages]);
+
+  const stopAudioPlayback = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
       // ==========================================================================
       // Fetch GPT Response
       // ==========================================================================
@@ -68,7 +98,7 @@
           {
             role: 'system',
             content:
-              'You are a assistant that helps users fill out the Calfresh application. Ask one question at a time in this format. Save all the information and provide a summary at the end to allow the user to review. 1. What is your contact email address? 2. What is your full name? 3. What is your phone number? 4. What is your address? 5. Are you homeless yes or no? 6. Is your household’s gross income less than $150 and cash on hand, checking and savings accounts of $100 or less? Yes or No? 7. Have your utilities been shut off or do you have a shut-off notice? Yes or No? 8.Will your food run out in 3 days or less? ',
+              'You are a assistant that helps users fill out the Calfresh application. Ask one question at a time in this format. Save all the information and provide a summary at the end to allow the user to review. After user confirms the information is correct, say the next step if for the user to wait for a response from the CalFresh program. We have submitted the application on their behave. They will recieve an email in a few days with the details and the progress of the application with further instructions. 1. What is your contact email address? 2. What is your full name? 3. What is your phone number? 4. What is your address? 5. Are you homeless yes or no? 6. Is your household’s gross income less than $150 and cash on hand, checking and savings accounts of $100 or less? Yes or No? 7. Have your utilities been shut off or do you have a shut-off notice? Yes or No? 8.Will your food run out in 3 days or less? ',
           },
           ...messages.map((msg) => ({
             role: msg.sender === 'user' ? 'user' : 'assistant',
@@ -89,10 +119,16 @@
               messages: chatHistory,
             }),
           });
-    
+      
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('GPT API Error Response:', errorText); // Log error details
+            throw new Error(`GPT API Error: ${response.status} - ${response.statusText}`);
+          }
+      
           const data = await response.json();
           const botMessage = data.choices[0].message.content.trim();
-    
+      
           // Special check for CalFresh
           if (botMessage === 'CalFreshAccepted') {
             setMessages((prev) => [
@@ -101,11 +137,25 @@
             ]);
             return;
           }
-    
+      
+          // Special check for FoodBank
+          if (botMessage === 'FoodBankAccepted') {
+            setMessages((prev) => [
+              ...prev,
+              { sender: 'bot', type: 'foodBankAccepted' },
+            ]);
+            return;
+          }
+      
           // Normal Bot Response
-          handleBotResponse(botMessage);
+          if (selectedLanguage !== 'English') {
+            handleTranslateAndPlayTTS(botMessage);
+          } else {
+            setMessages((prev) => [...prev, { sender: 'bot', text: botMessage }]);
+            playTTS(botMessage);
+          }
         } catch (error) {
-          console.error('Error fetching response:', error);
+          console.error('Error fetching response:', error.message); // Log general error
           setMessages((prev) => [
             ...prev,
             {
@@ -116,17 +166,6 @@
         }
       };
     
-      // ==========================================================================
-      // Handle Bot Response (Translate if needed, else just store & speak)
-      // ==========================================================================
-      const handleBotResponse = (botMessage) => {
-        if (selectedLanguage !== 'English') {
-          handleTranslateAndPlayTTS(botMessage);
-        } else {
-          setMessages((prev) => [...prev, { sender: 'bot', text: botMessage }]);
-          playTTS(botMessage);
-        }
-      };
     
       // ==========================================================================
       // Translate & TTS
@@ -173,6 +212,7 @@
       // ==========================================================================
       const playTTS = async (text, voiceId = 'pFZP5JQG7iQjIQuC4Bku') => {
         try {
+          stopAudioPlayback();
           const audioBlob = await tts11(text, voiceId);
           const audioUrl = URL.createObjectURL(audioBlob);
           const audio = new Audio(audioUrl);
@@ -183,13 +223,24 @@
       };
     
       // ==========================================================================
-      // Send Message (Desktop only now)
+      // Send Message
       // ==========================================================================
       const handleSendMessage = () => {
         if (input.trim() !== '') {
+          stopAudioPlayback();
           const userMessage = input.trim();
           setMessages((prev) => [...prev, { sender: 'user', text: userMessage }]);
           setInput('');
+    
+          // Refocus after clearing input
+          setTimeout(() => {
+            if (isMobile) {
+              mobileInputRef.current?.focus();
+            } else {
+              desktopInputRef.current?.focus();
+            }
+          }, 0);
+    
           fetchChatGPTResponse(userMessage);
         }
       };
@@ -230,7 +281,6 @@
             setIsListening(false);
     
             if (transcript.trim() !== '') {
-              // On mobile, we only have voice input, so add directly
               setMessages((prev) => [...prev, { sender: 'user', text: transcript }]);
               fetchChatGPTResponse(transcript);
             }
@@ -252,17 +302,18 @@
       };
     
       // ==========================================================================
-      // Handle Language Change
+      // Change Language
       // ==========================================================================
       const handleLanguageChange = (lang) => {
         setSelectedLanguage(lang);
       };
     
       // ==========================================================================
-      // On Key Press (Enter to Send) - Desktop only
+      // On Key Down (Enter to Send)
       // ==========================================================================
-      const handleKeyPress = (e) => {
+      const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
+          e.preventDefault(); 
           handleSendMessage();
         }
       };
@@ -347,7 +398,27 @@
               </div>
             );
           }
-    
+      
+          // Special UI for FoodBank
+          if (message.type === 'foodBankAccepted') {
+            return (
+              <div key={index} className="flex mb-4 items-center justify-start w-full">
+                <div className="max-w-sm w-auto p-4 rounded-lg shadow bg-blue-100 text-blue-800">
+                  <p className="mb-2 font-semibold">Food Bank Information</p>
+                  <p className="mb-4">
+                    Here’s information about local food banks that can assist you.
+                  </p>
+                  <button
+                    onClick={() => navigate('/resources/foodbank')}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  >
+                    View Food Banks
+                  </button>
+                </div>
+              </div>
+            );
+          }
+      
           // Normal Bot/User Messages
           return (
             <div
@@ -369,7 +440,7 @@
                     {message.translation}
                   </div>
                 )}
-    
+      
                 {message.sender === 'bot' && message.text && (
                   <button
                     onClick={() => handleTranslateMessage(message.text, index)}
@@ -386,7 +457,7 @@
       };
     
       // ==========================================================================
-      // MOBILE LAYOUT - Voice Only
+      // MOBILE LAYOUT
       // ==========================================================================
       const MobileLayout = () => {
         return (
@@ -411,56 +482,57 @@
                 Back
               </button>
             </nav>
-      
+    
             {/* Chat Body */}
-            <div
-              className="flex-grow overflow-y-auto overflow-x-hidden bg-gray-100 px-4 pt-3 pb-20 w-full"
-            >
+            <div className="flex-grow overflow-y-auto overflow-x-hidden bg-gray-100 px-4 pt-3 pb-20 w-full">
               {renderMessages()}
               <div ref={messageEndRef} />
             </div>
-      
-            {/* Bottom bar: Voice only + Language selector */}
-            <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-2 flex items-center justify-start space-x-2">
-              {/* Voice button (make it wider) */}
+    
+            {/* Chat Input (fixed at bottom) */}
+            <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-2 flex items-center space-x-1">
+              <input
+                ref={mobileInputRef}
+                type="text"
+                className="flex-1 border rounded-lg px-2 py-1 focus:outline-none focus:ring focus:ring-cyan-300"
+                placeholder="Message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus 
+              />
+              <button
+                onClick={handleSendMessage}
+                className="p-2 bg-cyan-400 text-white rounded-lg hover:bg-cyan-500 flex items-center justify-center"
+              >
+                <PaperAirplaneIcon className="h-4 w-4" />
+              </button>
               <button
                 onClick={handleVoiceInput}
-                className={`px-6 py-2 rounded-lg text-white ${
+                className={`p-2 rounded-lg text-white ${
                   isListening ? 'bg-red-500' : 'bg-cyan-400'
                 } hover:bg-cyan-500 flex items-center justify-center`}
-                style={{ minWidth: '60px' }} // Extra forced width if needed
               >
-                <MicrophoneIcon className="h-5 w-5" />
+                <MicrophoneIcon className="h-4 w-4" />
               </button>
-      
-              {/* 'Drop-up' Language container - note this is a hack and may not work consistently */}
-              <div className="relative">
-                <select
-                  value={selectedLanguage}
-                  onChange={(e) => handleLanguageChange(e.target.value)}
-                  className="border rounded-lg p-1 text-sm 
-                             focus:outline-none 
-                             focus:ring-1 focus:ring-cyan-300
-                             bg-white"
-                  style={{
-                    // Attempt to transform the select to open upwards
-                    transformOrigin: 'center bottom',
-                  }}
-                >
-                  {Object.keys(languageCodes).map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                className="border rounded-lg p-1 text-sm"
+              >
+                {Object.keys(languageCodes).map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         );
       };
     
       // ==========================================================================
-      // DESKTOP LAYOUT (unchanged)
+      // DESKTOP LAYOUT
       // ==========================================================================
       const DesktopLayout = () => {
         return (
@@ -496,7 +568,6 @@
                 className="w-1/3 bg-white rounded-lg shadow flex-shrink-0 flex flex-col"
                 style={{ height: 'calc(100vh - 8rem)' }}
               >
-                {/* Avatar Image */}
                 <div
                   className="flex-grow"
                   style={{
@@ -509,12 +580,12 @@
     
                 {/* Description Section */}
                 <div className="p-4 bg-white">
-                  <h2 className="text-lg font-bold mb-2 text-center">211 Call Center</h2>
+                  <h2 className="text-lg font-bold mb-2 text-center">CalFresh Application Assistant</h2>
                   <p className="text-center text-sm mb-2">
                     <br />
                   </p>
                   <p className="text-center text-sm">
-                    Get assistance with community resources and support.
+                    Get assistance with questions and completion of the Calfresh forms and applications.
                   </p>
                   <button
                     className="mt-4 px-4 py-2 bg-cyan-400 text-white rounded-lg hover:bg-cyan-500 w-full"
@@ -535,18 +606,20 @@
               </div>
             </div>
     
-            {/* Desktop Chat Input (Text + Send + Voice + Language) */}
+            {/* Bottom Chat Input Bar */}
             <div
               className="flex items-center p-4 bg-white border-t"
               style={{ position: 'sticky', bottom: 0 }}
             >
               <input
+                ref={desktopInputRef}
                 type="text"
                 className="flex-grow border rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-cyan-300"
                 placeholder="Type your message..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyDown}
+                autoFocus 
               />
               <button
                 onClick={handleSendMessage}
@@ -581,9 +654,9 @@
       };
     
       // ==========================================================================
-      // Final Return: Only Voice Input on mobile
+      // Final Return: use isMobile for layout
       // ==========================================================================
-      return mobileLayout ? <MobileLayout /> : <DesktopLayout />;
+      return isMobile ? <MobileLayout /> : <DesktopLayout />;
     };
     
     export default ChatFormPage;

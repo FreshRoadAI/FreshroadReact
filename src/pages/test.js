@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import freshroadlogo from '../images/freshroadlogo.png';
 import avatarImage from '../images/callrep.png';
+import { setupAgent, speak } from '../d-id';
 import {
   PaperAirplaneIcon,
   MicrophoneIcon,
@@ -154,7 +155,7 @@ const ChatInterfacePage = () => {
         handleTranslateAndPlayTTS(botMessage);
       } else {
         setMessages((prev) => [...prev, { sender: 'bot', text: botMessage }]);
-        playTTS(botMessage);
+        speak(botMessage);
       }
     } catch (error) {
       console.error('Error fetching response:', error.message);
@@ -213,7 +214,7 @@ const ChatInterfacePage = () => {
         handleTranslateAndPlayTTS(botMessage);
       } else {
         setMessages((prev) => [...prev, { sender: 'bot', text: botMessage }]);
-        playTTS(botMessage);
+        speak(botMessage);
       }
     } catch (error) {
       console.error('Error fetching response:', error.message);
@@ -272,7 +273,7 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
       handleTranslateAndPlayTTS(botMessage);
     } else {
       setMessages((prev) => [...prev, { sender: 'bot', text: botMessage }]);
-      playTTS(botMessage);
+      speak(botMessage);
     }
   } catch (error) {
     console.error('Error fetching response:', error.message);
@@ -348,6 +349,7 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
   // Handle "Start"
   // ==========================================================================
   const handleStart = () => {
+    setupAgent()
     setHasStarted(true);
     const greeting =
       translations[selectedLanguage]?.greetMsg || translations.English.greetMsg;
@@ -480,7 +482,7 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
         return updated;
       });
 
-      await playTTS(translatedMessage);
+      await speak(translatedMessage);
     } catch (error) {
       console.error('Error translating:', error);
     } finally {
@@ -651,28 +653,7 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
                and 1/3 width on desktop.
         */}
         <div className="md:w-1/3 w-full bg-white rounded-lg shadow flex-shrink-0 flex flex-col">
-          <div
-            className="flex-grow"
-            style={{
-              backgroundImage: `url(${avatarImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              width: '100%',
-            }}
-          />
-          <div className="p-4 bg-white">
-            <h2 className="text-lg font-bold mb-2 text-center">211 Call Center</h2>
-            <p className="text-center text-sm mb-2"></p>
-            <p className="text-center text-sm">
-              Get assistance with community resources and support.
-            </p>
-            <button
-              className="mt-4 px-4 py-2 bg-cyan-400 text-white rounded-lg hover:bg-cyan-500 w-full"
-              onClick={() => alert('Change Avatar functionality not implemented yet!')}
-            >
-              Change Avatar
-            </button>
-          </div>
+        <div className="w-1/4"><video id="videoElement" autoPlay loop className="bg-contain bg-no-repeat bg-center h-full"></video></div>
         </div>
 
         {/* RIGHT PANEL: Chat Content */}
