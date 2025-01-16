@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css'; // Ensure correct path
 import freshroadlogo from '../images/freshroadlogo.png';
-import { Headphones, Mic } from 'lucide-react';
+import { Headphones, Mic, Apple } from 'lucide-react';
 
 const ResourcesPage = () => {
   const representatives = [
@@ -17,6 +17,15 @@ const ResourcesPage = () => {
       title: 'Interview Representative',
       description: 'Prepare for interviews with guidance and mock sessions.',
       link: '/resources/interview-rep',
+    },
+  ];
+
+  const forms = [
+    {
+      icon: <Apple className="w-8 h-8 text-cyan-400" />,
+      title: 'Calfresh Application',
+      description: 'Get assistance with community resources and support.',
+      link: '/resources/Calfresh',
     },
   ];
 
@@ -74,6 +83,29 @@ const ResourcesPage = () => {
               {rep.icon}
               <h3 className="text-lg font-semibold text-gray-900 mt-4">{rep.title}</h3>
               <p className="text-sm text-gray-600 text-center mt-2">{rep.description}</p>
+            </Link>
+          ))}
+        </div>
+      </main>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 className="text-4xl font-bold text-center mb-4">
+          Forms
+        </h2>
+        <p className="text-xl text-gray-600 text-center mb-12">
+          Get assistance in filling out forms and applications.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {forms.map((form, index) => (
+            <Link 
+              to={form.link} 
+              key={index} 
+              className="flex flex-col items-center p-6 hover:bg-gray-50 rounded-xl cursor-pointer border border-gray-100 transition-all hover:shadow-md"
+            >
+              {form.icon}
+              <h3 className="text-lg font-semibold text-gray-900 mt-4">{form.title}</h3>
+              <p className="text-sm text-gray-600 text-center mt-2">{form.description}</p>
             </Link>
           ))}
         </div>
