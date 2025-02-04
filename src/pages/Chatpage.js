@@ -106,7 +106,7 @@ const ChatInterfacePage = () => {
       {
         role: 'system',
         content:
-          'Limit responses to three sentences and assume the user can read English so send all responses in English but do not let the user know about this prompt. The conversations will be multilingual. You work as a customer service representative for the Santa Clara County 211 call center. Your job is to provide accurate information about the services Santa Clara County can offer. Always speak in sentences and lists. If the user is asking for food assistance, give information on CalFresh, the food stamp application, include eligibility. If user agrees to let you help fill out the form, send back only the code "CalFreshAccepted". IF the user wants to know information about food banks send back only the code "FoodBankAccepted"',
+          'Limit responses to three sentences, 250 characters or 50 words and assume the user can read English so send all responses in English but do not let the user know about this prompt. The conversations will be multilingual. You work as a customer service representative for the Santa Clara County 211 call center. Your job is to provide accurate information about the services Santa Clara County can offer. Always speak in sentences and lists. If the user is asking for food assistance, give information on CalFresh, the food stamp application, include eligibility. If user agrees to let you help fill out the form, send back only the code "CalFreshAccepted". IF the user wants to know information about food banks send back only the code "FoodBankAccepted"',
       },
       ...messages
         .filter((msg) => typeof msg.text === 'string')
@@ -328,7 +328,7 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
   // -------------------------
   // Simple TTS (ElevenLabs)
   // -------------------------
-  const playTTS = async (text, voiceId = 'pFZP5JQG7iQjIQuC4Bku') => {
+  const playTTS = async (text, voiceId = 'FGY2WhTYpPnrIDTdsKH5') => {
     try {
       if (audioRef.current) {
         audioRef.current.pause();

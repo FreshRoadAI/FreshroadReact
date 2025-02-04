@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css'; // Ensure correct path
 import freshroadlogo from '../images/freshroadlogo.png';
-import { Headphones, Mic, Apple, ShoppingBasket  } from 'lucide-react';
+import { Headphones, Mic, Apple, ShoppingBasket, Phone  } from 'lucide-react';
 
 const ResourcesPage = () => {
   const representatives = [
@@ -13,10 +13,10 @@ const ResourcesPage = () => {
       link: '/resources/211-call-center',
     },
     {
-      icon: <ShoppingBasket  className="w-8 h-8 text-cyan-400" />,
-      title: 'Food Bank Locator',
-      description: 'Get information on your local food banks',
-      link: '/resources/foodbank',
+      icon: <Phone className="w-8 h-8 text-cyan-400" />,
+      title: 'Phone Call',
+      description: 'Phone call assistance for 211 Call center',
+      link: '/resources/phone',
     },
 
     {
@@ -25,15 +25,22 @@ const ResourcesPage = () => {
       description: 'Lip Sync and Animated Avatar.',
       link: '/resources/DID',
     },
+    {
+      icon: <Apple className="w-8 h-8 text-cyan-400" />,
+      title: 'Text Only',
+      description: 'Get assistance with community resources and support.',
+      link: '/resources/plainpage',
+    },
+    {
+      icon: <Mic  className="w-8 h-8 text-cyan-400" />,
+      title: 'Phone Call No Text',
+      description: 'Get assistance with community resources and support.',
+      link: '/resources/phonecall',
+    },
   ];
 
   const forms = [
-    {
-      icon: <Apple className="w-8 h-8 text-cyan-400" />,
-      title: 'Calfresh Application',
-      description: 'Get assistance with community resources and support.',
-      link: '/resources/Calfresh',
-    },
+   
   ];
 
   return (

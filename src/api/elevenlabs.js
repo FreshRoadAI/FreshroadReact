@@ -6,7 +6,7 @@ const headers = {
   'Content-Type': 'application/json',
   'xi-api-key': 'sk_a36cf48b18267cb52d1a861bda592227e582eec79e608500',
 };
-const model = 'eleven_multilingual_v2'; // Updated model ID
+const model = 'eleven_flash_v2_5'; // Updated model ID
 
 /**
  * Function to interact with the ElevenLabs Text-to-Speech API.

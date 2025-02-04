@@ -661,7 +661,7 @@ const fetchFoodBankGPTResponse = async (userMessage) => {
                and 1/3 width on desktop.
         */}
         <div className="md:w-1/3 w-full bg-white rounded-lg shadow flex-shrink-0 flex flex-col">
-        <div className="w-150" ><video id="videoElement" autoPlay loop className="bg-contain bg-no-repeat bg-center h-full"></video></div>
+        <div className="w-full h-full" ><video id="videoElement" autoPlay loop className="bg-contain bg-no-repeat bg-center h-full"></video></div>
         </div>
 
         {/* RIGHT PANEL: Chat Content */}

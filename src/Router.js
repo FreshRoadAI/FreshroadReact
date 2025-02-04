@@ -6,9 +6,10 @@ import Resources from './pages/Resources';
 import CivicsLearningPage from './pages/Civicslearning';
 import CivicsExamPage from './pages/CivicsExam';
 import ChatInterfacePage from './pages/Chatpage';
-import ChatFormPage from './pages/Calfreshform';
+import PhoneCallPage from './pages/PhoneCallPage';
 import DIDInterfacePage from './pages/Didpage';
-import FoodBankPage from './pages/Foodbank';
+import NoAvatarPage from './pages/NoAvatarPage';
+import PhoneCallNoTextPage from './pages/PhoneCallNoTextPage';
 
 const AppRouter = () => {
   return (
@@ -20,9 +21,10 @@ const AppRouter = () => {
         <Route path="/courses/civics-101" element={<CivicsLearningPage />} />
         <Route path="/tests/us-civics" element={<CivicsExamPage />} />
         <Route path="/resources/211-call-center" element={<ChatInterfacePage />} />
-        <Route path="/resources/Calfresh" element={<ChatFormPage />} />
+        <Route path="/resources/PlainPage" element={<NoAvatarPage />} />
         <Route path="/resources/DID" element={<DIDInterfacePage />} />
-        <Route path="/resources/foodbank" element={<FoodBankPage />} />
+        <Route path="/resources/phone" element={<PhoneCallPage />} />
+        <Route path="/resources/phonecall" element={<PhoneCallNoTextPage />} />
       </Routes>
     </Router>
   );
